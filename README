@@ -2,7 +2,7 @@ jQuery 1.4.x or later is required.
 
 Steps:
 1 - Put AjaxFactory.init() on the top of your script.
-2 - Then you need to wrap every AJAX request with the addRequest() function, like this: AjaxFactory.addRequest("my_unique_id",$.post(....)
+2 - Then you need to wrap every AJAX request with the addRequest() function, like this: AjaxFactory.addRequest("my_unique_id",$.post(....))
 3 - Then, if you wanna kill all pending requests, just execute AjaxFactory.killAllRequests()
 4 - Or kill a single request with AjaxFactory.killRequest("my_unique_id")
 
