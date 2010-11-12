@@ -7,7 +7,8 @@ var RQ = {
        }
        RQ.container = [];
     },
-    add: function(req_id,req) {
+    add: function(req,req_id) {
+        req_id = req_id || "rq_"+RQ.container.length + 1;
         if(req !== false)
             RQ.container.push({id: req_id,request: req});
     },

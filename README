@@ -2,9 +2,9 @@ jQuery 1.4.x or later is required.
 
 Steps:
 1 - Load reqman.js
-2 - Wrap every AJAX request with the add() function, like this: RQ.add("my_unique_id",$.post(....))
+2 - Wrap every AJAX request with the add() function, like this: RQ.add($.get(....),"optional_id")
 3 - Then, if you wanna kill all pending requests, just execute RQ.killAll()
-4 - Or kill a single request with RQ.kill("my_unique_id")
+4 - Or kill a single request with RQ.kill("optional_id")
 
 That's all folks!
 
