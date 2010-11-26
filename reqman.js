@@ -4,6 +4,26 @@
 * @class
 */
 var RQ = {
+    /**
+    * Função para executar um callback antes de adicionar uma request
+    * @function
+    */
+    beforeAdd: null,
+    /**
+    * Função para executar um callback após adicionar uma request
+    * @function
+    */
+    afterAdd: null,
+    /**
+    * Função para executar um callback antes de remover uma request
+    * @function
+    */
+    beforeRemove: null,
+    /**
+    * Função para executar um callback depois de remover uma request
+    * @function
+    */
+    afterRemove: null,
     container: [],
     /**
     * Função para excluir todas as requests do container
@@ -23,9 +43,13 @@ var RQ = {
     * @function
     */
     add: function(req,req_id) {
+        if(typeof RQ.beforeAdd === "function")
+            RQ.beforeAdd();
         req_id = req_id || "rq_"+RQ.container.length + 1;
         if(req !== false)
             RQ.container.push({id: req_id,request: req});
+        if(typeof RQ.afterAdd === "function")
+            RQ.afterAdd();
     },
     /**
     * Função para buscar uma request no container
@@ -50,9 +74,13 @@ var RQ = {
     * @function
     */
     remove: function(condition) {
+        if(typeof RQ.beforeRemove === "function")
+            RQ.beforeRemove();
         var index = RQ.find(condition);
         if(index > -1)
             RQ.container.splice(index,1);
+        if(typeof RQ.afterRemove === "function")
+            RQ.afterRemove();
     },
     /**
     * Função para excluir uma request do container(ela será automaticamente abortada)
@@ -64,7 +92,7 @@ var RQ = {
         if(index > -1) {
             if(RQ.container[index]["request"] !== false)
                 RQ.container[index]["request"].abort();
-            RQ.container.splice(i,1);
+            RQ.remove(condition);
         }
     },
     /**
