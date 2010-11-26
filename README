@@ -2,10 +2,10 @@ jQuery 1.4.x or later is required.
 
 Steps:
 - Load reqman.js
-- Optionally, set a callback to execute before or after adding/removing a request(see the docs folder)
+- Optionally, set a callback to execute before or after adding/removing a request(see the docs)
 - Wrap every AJAX request with the add() function, like this: RQ.add($.get(....),"optional_id")
 - Then, if you wanna kill all pending requests, just execute RQ.killAll()
 - Or kill a single request with RQ.kill("optional_id")
 
-That's all folks! (The docs folder contains more details!)
+That's all folks! (The docs contain more details!)
 
