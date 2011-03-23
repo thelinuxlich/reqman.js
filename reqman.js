@@ -78,14 +78,16 @@
     killByRegex: function(condition) {
       var i, indexes, _ref, _results;
       indexes = RQ.findByRegex(condition);
-      _results = [];
-      for (i = 0, _ref = indexes.length; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
-        if (RQ.container[indexes[i]]["request"] !== false) {
-          RQ.container[indexes[i]]["request"].abort();
+      if (indexes.length > 0) {
+        _results = [];
+        for (i = 0, _ref = indexes.length; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+          if (RQ.container[indexes[i]]["request"] !== false) {
+            RQ.container[indexes[i]]["request"].abort();
+          }
+          _results.push(RQ.remove(RQ.container[indexes[i]]["id"]));
         }
-        _results.push(RQ.remove(RQ.container[indexes[i]]["id"]));
+        return _results;
       }
-      return _results;
     },
     showAll: function() {
       var i, requests;

@@ -22,7 +22,7 @@
                 RQ.container[i]["request"].abort()
         RQ.container = []
 
-    # Function to add a request to the container.
+    # Function to add a request to the container
     # First parameter is the AJAX Request, second is a optional unique ID
     add: (req,req_id) ->
         if typeof RQ.beforeAdd is "function"
@@ -52,7 +52,7 @@
         for i of RQ.container
             if i["id"].match condition
                 indexes.push i
-        indexes;
+        indexes
 
     # Function to remove a request of the container
     # First parameter is the AJAX Request, second is a optional unique ID
@@ -78,10 +78,11 @@
     # First parameter is a RegExp object
     killByRegex: (condition) ->
         indexes = RQ.findByRegex condition
-        for i in [0..indexes.length]
-            if RQ.container[indexes[i]]["request"] isnt false
-                RQ.container[indexes[i]]["request"].abort()
-            RQ.remove RQ.container[indexes[i]]["id"]
+        if indexes.length > 0
+            for i in [0..indexes.length]
+                if RQ.container[indexes[i]]["request"] isnt false
+                    RQ.container[indexes[i]]["request"].abort()
+                RQ.remove RQ.container[indexes[i]]["id"]
 
     # Function to show all requests on the container
     showAll: ->
