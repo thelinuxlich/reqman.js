@@ -5,102 +5,100 @@
     beforeRemove: null,
     afterRemove: null,
     container: [],
+    containerMap: {},
     killAll: function() {
-      var i;
-      for (i in RQ.container) {
-        if (RQ.container[i]["request"] !== false) {
-          RQ.container[i]["request"].abort();
-        }
+      var key, req_id, _i, _len, _ref;
+      _ref = RQ.container;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        req_id = _ref[_i];
+        key = RQ.container[req_id];
+        RQ.containerMap[key].abort();
       }
-      return RQ.container = [];
+      RQ.container = [];
+      return RQ.containerMap = {};
     },
     add: function(req, req_id) {
       if (typeof RQ.beforeAdd === "function") {
         RQ.beforeAdd();
       }
       req_id = req_id || ("rq_" + (RQ.container.length + 1));
+      req.container_id = req_id;
       if (req !== false) {
-        RQ.container.push({
-          id: req_id,
-          request: req
-        });
+        RQ.container.push(req_id);
+        RQ.containerMap[req_id] = req;
       }
       if (typeof RQ.afterAdd === "function") {
         return RQ.afterAdd();
       }
     },
-    find: function(condition) {
-      var field, i, index;
-      index = -1;
-      field = "";
-      field = condition["request"] !== void 0 ? "request" : "id";
-      for (i in RQ.container) {
-        if (RQ.container[i][field] === condition[field]) {
-          index = i;
-          break;
-        }
-      }
-      return index;
-    },
-    findByRegex: function(condition) {
-      var i, indexes;
-      indexes = [];
-      for (i in RQ.container) {
-        if (i["id"].match(condition)) {
-          indexes.push(i);
-        }
-      }
-      return indexes;
-    },
     remove: function(condition) {
-      var index;
+      var index, key, oldkey, request, _ref;
       if (typeof RQ.beforeRemove === "function") {
         RQ.beforeRemove();
       }
-      index = typeof condition === "object" ? RQ.find(condition) : condition;
-      if (index > -1) {
-        RQ.container.splice(index, 1);
+      if (typeof condition === "object") {
+        _ref = RQ.containerMap;
+        for (key in _ref) {
+          request = _ref[key];
+          if (request === condition["request"]) {
+            index = RQ.container.indexOf[key];
+            oldkey = key;
+            break;
+          }
+        }
+      } else {
+        index = RQ.container.indexOf[condition];
+        oldkey = condition;
       }
+      RQ.container.splice(index, 1);
+      delete RQ.containerMap[condition];
       if (typeof RQ.afterRemove === "function") {
         return RQ.afterRemove();
       }
     },
     kill: function(condition) {
-      var index;
-      index = RQ.find(condition);
-      if (index > -1) {
-        if (RQ.container[index]["request"] !== false) {
-          RQ.container[index]["request"].abort();
+      var key, oldkey, request, _ref;
+      if (typeof condition === "object") {
+        _ref = RQ.containerMap;
+        for (key in _ref) {
+          request = _ref[key];
+          if (request === condition["request"]) {
+            oldkey = key;
+            break;
+          }
         }
-        return RQ.remove(condition);
+      } else {
+        oldkey = condition;
       }
+      if (RQ.containerMap[oldkey] !== false) {
+        RQ.container[oldkey].abort();
+      }
+      return RQ.remove(oldkey);
     },
     killByRegex: function(condition) {
-      var i, indexes, _ref, _results;
-      indexes = RQ.findByRegex(condition);
-      if (indexes.length > 0) {
-        _results = [];
-        for (i = 0, _ref = indexes.length; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
-          if (RQ.container[indexes[i]]["request"] !== false) {
-            RQ.container[indexes[i]]["request"].abort();
-          }
-          _results.push(RQ.remove(RQ.container[indexes[i]]["id"]));
-        }
-        return _results;
+      var key, _i, _len, _ref, _results;
+      _ref = RQ.container;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        key = _ref[_i];
+        _results.push(key.match(condition) ? (RQ.containerMap[key] !== false ? RQ.containerMap[key].abort() : void 0, RQ.remove(key)) : void 0);
       }
+      return _results;
     },
     showAll: function() {
-      var i, requests;
+      var key, request, requests, _ref;
       requests = "";
-      for (i in RQ.container) {
-        requests += "id: " + RQ.container[i]['id'] + ",request: " + RQ.container[i]['request'] + "\n";
+      _ref = RQ.containerMap;
+      for (key in _ref) {
+        request = _ref[key];
+        requests += "id: " + key + ",request: " + request + "\n";
       }
       return requests;
     }
   };
   $(document).ajaxComplete(function(e, xhr, settings) {
-    return RQ.remove({
-      request: xhr
-    });
+    if (xhr.container_id != null) {
+      return RQ.remove(xhr.container_id);
+    }
   });
 }).call(this);
