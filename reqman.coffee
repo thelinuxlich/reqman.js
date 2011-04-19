@@ -1,6 +1,6 @@
 # AJAX Request Container
 @RQ =
-  # Callback to execute before adding a request
+    # Callback to execute before adding a request
     beforeAdd: null
 
     # Callback to execute after adding a request
@@ -18,17 +18,17 @@
 
     # Function to kill all requests
     killAll: ->
-      for req_id in RQ.container
-        key = RQ.container[req_id]
-        RQ.containerMap[key].abort()
+        for req_id in RQ.container
+            key = RQ.container[req_id]
+            RQ.containerMap[key].abort()
         RQ.container = []
         RQ.containerMap = {}
 
     # Function to add a request to the container
     # First parameter is the AJAX Request, second is a optional unique ID
     add: (req,req_id) ->
-      if typeof RQ.beforeAdd is "function"
-        RQ.beforeAdd()
+        if typeof RQ.beforeAdd is "function"
+            RQ.beforeAdd()
         req_id = req_id or "rq_#{RQ.container.length + 1}"
         req.container_id = req_id
         if req isnt false
@@ -40,19 +40,19 @@
     # Function to remove a request of the container
     # First parameter is the AJAX Request, second is a optional unique ID
     remove: (condition) ->
-      if typeof RQ.beforeRemove is "function"
-        RQ.beforeRemove()
+        if typeof RQ.beforeRemove is "function"
+            RQ.beforeRemove()
         if typeof condition is "object"
           for key,request of RQ.containerMap
             if request is condition["request"]
               index = $.inArray(key,RQ.container)
               oldkey = key
               break
-            else
-              index = $.inArray(condition,RQ.container)
-            oldkey = condition
+        else
+          index = $.inArray(condition,RQ.container)
+          oldkey = condition
         RQ.container.splice index,1
-        delete RQ.containerMap[condition]
+        delete RQ.containerMap[oldkey]
         if typeof RQ.afterRemove is "function"
           RQ.afterRemove()
 
@@ -64,10 +64,10 @@
           if request is condition["request"]
             oldkey = key
             break
-          else
-            oldkey = condition
-        if RQ.containerMap[oldkey] isnt false
-          RQ.container[oldkey].abort()
+      else
+        oldkey = condition
+      if RQ.containerMap[oldkey] isnt false
+        RQ.container[oldkey].abort()
         RQ.remove oldkey
 
     # Function to remove all requests on the container matching a regex
